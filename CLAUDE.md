@@ -108,4 +108,4 @@ Rules the existing charts follow, and new ones should too:
 
 - No error boundary — an unexpected render error blanks the page.
 - The mock `users` array is module state, so it is shared across tabs and reset on reload.
-- Nothing has been checked in a browser. `pnpm type-check`, `pnpm lint` and `pnpm build` pass, but layout, dark mode and the responsive breakpoints are unverified — the `chrome-devtools` MCP server failed to connect in the session that built these screens.
+- `pnpm type-check`, `pnpm lint` and `pnpm build` pass. The `chrome-devtools` MCP server fails to connect, so layout was checked with a throwaway Chrome DevTools Protocol script instead (headless Chrome on `:9222`, `Emulation.setDeviceMetricsOverride` + `Runtime.evaluate`): inner page width, the dashboard KPI tiles and the locale of both component libraries at 1440px and 375px. Dark mode, the tablet breakpoint and the charts' rendered output remain unchecked.
