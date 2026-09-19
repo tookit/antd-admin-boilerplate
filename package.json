@@ -19,6 +19,7 @@
     "@ant-design/plots": "^2.6.8",
     "@ant-design/pro-components": "^2.8.10",
     "antd": "^5.29.3",
+    "dayjs": "^1.11.23",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router-dom": "^7.18.3"

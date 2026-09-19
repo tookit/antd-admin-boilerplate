@@ -21,23 +21,26 @@
 - [x] T2c 详情抽屉按 Basic Information / Role & Permissions / Account Status 分区；新建/编辑抽屉补头像字段。
 - [x] T2d 空状态与操作反馈文案对齐规范。
 
-### T3 Dashboard 页头与指标
+### T3 Dashboard 页头与指标（已完成）
 
-- [ ] `PageContainer` + 描述 + `DatePicker.RangePicker`，日期变化刷新指标、图表、订单。
-- [ ] 四张 KPI 卡：Total Users / Revenue / Orders / Conversion Rate，含图标着色、数值、环比与正负趋势色。
-- [ ] 加载用 `Skeleton`。
+- [x] `PageContainer` + 描述 + `DatePicker.RangePicker`，日期变化刷新指标、图表、订单。
+- [x] 四张 KPI 卡：Total Users / Revenue / Orders / Conversion Rate，含图标着色、数值、环比与正负趋势色。
+- [x] 加载用 `Skeleton`；加载失败用 `Alert` + Retry。
+- 说明：KPI 的环比是与「上一个等长区间」比较，由 mock 日序列实算，不是写死的百分比。
 
-### T4 Dashboard 图表
+### T4 Dashboard 图表（已完成）
 
-- [ ] Revenue Overview：Area + Line，Revenue / Orders 切换（`Segmented`），Monthly / Weekly / Daily（`Select`），随日期范围联动。
-- [ ] Traffic Sources：环形图，中心显示 Total Visits，右侧图例含占比，6 个来源。
-- [ ] 两张图各自配 `ChartDataTable`，遵守 `CHART_TOKENS`、`NO_ENTRY_ANIMATION`、单测度单色相规则。
+- [x] Revenue Overview：Area + Line，Revenue / Orders 切换（`Segmented`），Monthly / Weekly / Daily（`Select`），随日期范围联动。
+- [x] Traffic Sources：环形图，中心显示 Total Visits，右侧图例含占比，6 个来源。
+- [x] 两张图各自配 `ChartDataTable`，遵守 `CHART_TOKENS`、`NO_ENTRY_ANIMATION`、单测度单色相规则。
+- 说明：环形图属分类用色，改用经校验的 `CHART_TOKENS.categorical`（浅色/深色两套，均已跑过校验脚本）。
 
-### T5 Dashboard 底部区块
+### T5 Dashboard 底部区块（已完成）
 
-- [ ] Recent Orders：`ProTable` 最近 5 条，状态 Tag（Paid/Processing/Pending/Failed），操作收进 `Dropdown`，卡片右上 View All。
-- [ ] My Tasks：`List` + `Checkbox` + 优先级 Tag，勾选后置灰并提示。
-- [ ] Calendar：`Calendar` mini 模式，选中日期下方展示当天事件。
+- [x] Recent Orders：最近 5 条，状态 Badge（Paid/Processing/Pending/Failed），操作收进 `Dropdown`。
+- [x] My Tasks：`List` + `Checkbox` + 优先级 Tag，勾选后置灰并提示。
+- [x] Calendar：`Calendar` mini 模式，有事件的日期带圆点，选中日期下方展示当天事件。
+- 说明：订单页不在本次范围内，View All 置灰并注明；Orders/View/Refund 操作提示需要后端。
 
 ### T6 Settings
 

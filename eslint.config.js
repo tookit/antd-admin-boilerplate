@@ -37,7 +37,7 @@ export default tseslint.config(
         'error',
         {
           allowConstantExport: true,
-          allowExportNames: ['useAuth', 'useSettings', 'DEFAULT_SETTINGS'],
+          allowExportNames: ['useAuth', 'useSettings', 'useDarkMode', 'DEFAULT_SETTINGS'],
         },
       ],
     },

@@ -62,3 +62,18 @@ export function useSettings() {
   if (!context) throw new Error('useSettings requires SettingsProvider');
   return context;
 }
+
+/** Resolves `mode` against the OS preference. Charts need it to pick their palette. */
+export function useDarkMode() {
+  const { settings } = useSettings();
+  const [systemDark, setSystemDark] = useState(
+    () => matchMedia('(prefers-color-scheme: dark)').matches,
+  );
+  useEffect(() => {
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    const update = () => setSystemDark(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  return settings.mode === 'dark' || (settings.mode === 'system' && systemDark);
+}

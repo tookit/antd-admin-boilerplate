@@ -69,6 +69,18 @@ export const CHART_TOKENS = {
   seriesFillOpacity: 0.1,
   grid: '#e6eef8',
   axisLabel: '#67727a',
+  /**
+   * Categorical slots for charts where the colour *is* the identity (traffic
+   * sources). Validated as a set — lightness band, chroma floor, adjacent-pair
+   * CVD separation and normal-vision separation — in both modes; the dark column
+   * is re-stepped for the dark surface, not flipped. Three light slots sit under
+   * 3:1 against the card, so every chart that uses them ships its `ChartDataTable`
+   * and direct legend labels as the required relief. Assign in order; never cycle.
+   */
+  categorical: {
+    light: ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300'],
+    dark: ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300'],
+  },
 } as const;
 
 /**

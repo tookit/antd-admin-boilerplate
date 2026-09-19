@@ -1,9 +1,9 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 import { App as AntdApp, ConfigProvider, theme } from 'antd';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 import { AuthProvider } from '@/contexts/AuthContext';
-import { SettingsProvider, useSettings } from '@/contexts/SettingsContext';
+import { SettingsProvider, useDarkMode, useSettings } from '@/contexts/SettingsContext';
 import Router from '@/routes';
 import { appTheme } from '@/constants/app';
 
@@ -34,16 +34,7 @@ function ThemeSurface() {
 }
 function ThemedApp() {
   const { settings } = useSettings();
-  const [systemDark, setSystemDark] = useState(
-    () => matchMedia('(prefers-color-scheme: dark)').matches,
-  );
-  useEffect(() => {
-    const media = matchMedia('(prefers-color-scheme: dark)');
-    const update = () => setSystemDark(media.matches);
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
-  }, []);
-  const dark = settings.mode === 'dark' || (settings.mode === 'system' && systemDark);
+  const dark = useDarkMode();
   return (
     <ConfigProvider
       locale={settings.language === 'zh-CN' ? zhCN : enUS}

@@ -1,6 +1,13 @@
-import type { DashboardData, RoleCount, SignupPoint, User, UserInput, UserRole } from '@/types';
-
-const ROLES: UserRole[] = ['admin', 'editor', 'viewer'];
+import type {
+  CalendarEvent,
+  DailyPoint,
+  DashboardSnapshot,
+  Order,
+  Task,
+  TrafficSource,
+  User,
+  UserInput,
+} from '@/types';
 
 let users: User[] = [
   {
@@ -149,70 +156,131 @@ let users: User[] = [
   },
 ];
 
-/** Product-level signup volume. Independent of the `users` table above, which is the admin's slice. */
-const SIGNUPS_BY_MONTH: SignupPoint[] = [
-  { month: 'Oct', signups: 42 },
-  { month: 'Nov', signups: 51 },
-  { month: 'Dec', signups: 38 },
-  { month: 'Jan', signups: 64 },
-  { month: 'Feb', signups: 58 },
-  { month: 'Mar', signups: 71 },
-  { month: 'Apr', signups: 66 },
-  { month: 'May', signups: 82 },
-  { month: 'Jun', signups: 77 },
-  { month: 'Jul', signups: 91 },
-  { month: 'Aug', signups: 88 },
-  { month: 'Sep', signups: 96 },
+/**
+ * Product-level activity for the last 365 days. Independent of the `users` table
+ * above, which is the admin's slice of it.
+ *
+ * Seeded rather than random: the demo must not reshuffle its own numbers on every
+ * reload, and the recent days have to stay put while the user compares ranges.
+ */
+function buildDaily(days: number): DailyPoint[] {
+  let seed = 20260101;
+  const next = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const end = new Date();
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(end);
+    date.setDate(end.getDate() - (days - 1 - index));
+    const weekend = date.getDay() === 0 || date.getDay() === 6 ? 0.72 : 1;
+    const growth = 1 + index / (days * 1.6);
+    const revenue = Math.round(760 * weekend * growth * (0.85 + next() * 0.3));
+    const orders = Math.round(revenue / 21);
+    return {
+      date: date.toISOString().slice(0, 10),
+      revenue,
+      orders,
+      visits: Math.round(orders * (24 + next() * 6)),
+    };
+  });
+}
+
+const DAILY = buildDaily(365);
+
+/** Visits by source, as shares that add up to 100. */
+const TRAFFIC_SOURCES: TrafficSource[] = [
+  { name: 'Organic Search', share: 40 },
+  { name: 'Direct', share: 24 },
+  { name: 'Referral', share: 16 },
+  { name: 'Social Media', share: 12 },
+  { name: 'Email', share: 6 },
+  { name: 'Paid Ads', share: 2 },
+];
+
+const isoDaysAgo = (days: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().slice(0, 10);
+};
+
+const ORDERS: Order[] = (
+  [
+    { customer: 'Alex Morgan', product: 'MacBook Pro 14"', amount: 1999, status: 'paid' },
+    { customer: 'Taylor Kim', product: 'iPhone 15', amount: 999, status: 'processing' },
+    { customer: 'Sofia Almeida', product: 'AirPods Pro', amount: 249, status: 'paid' },
+    { customer: 'Priya Raman', product: 'Mechanical Keyboard', amount: 129, status: 'pending' },
+    { customer: 'Emma Larsen', product: '27" Monitor', amount: 399, status: 'paid' },
+    { customer: 'Tom Becker', product: 'USB-C Dock', amount: 179, status: 'failed' },
+  ] as const
+).map((order, index) => ({ ...order, id: index + 1, createdAt: isoDaysAgo(index) }));
+
+const TASKS: Task[] = [
+  {
+    id: 1,
+    title: 'Review new user registrations',
+    detail: '3 pending approvals',
+    priority: 'high',
+    done: false,
+  },
+  {
+    id: 2,
+    title: 'Update product descriptions',
+    detail: 'Marketing',
+    priority: 'medium',
+    done: false,
+  },
+  {
+    id: 3,
+    title: 'Approve refund requests',
+    detail: '2 requests',
+    priority: 'medium',
+    done: false,
+  },
+  {
+    id: 4,
+    title: 'Prepare monthly report',
+    detail: 'Due tomorrow',
+    priority: 'low',
+    done: true,
+  },
+  {
+    id: 5,
+    title: 'Plan Q4 marketing campaign',
+    detail: 'Strategy',
+    priority: 'low',
+    done: false,
+  },
+];
+
+const EVENTS: CalendarEvent[] = [
+  { date: isoDaysAgo(-1), title: 'Team sync meeting', time: '10:00 – 11:00 AM', tone: 'primary' },
+  {
+    date: isoDaysAgo(-1),
+    title: 'Product update review',
+    time: '2:00 – 3:00 PM',
+    tone: 'success',
+  },
+  { date: isoDaysAgo(-1), title: 'Design workshop', time: '4:00 – 5:00 PM', tone: 'purple' },
+  { date: isoDaysAgo(-3), title: 'Vendor call', time: '11:30 AM – 12:00 PM', tone: 'warning' },
 ];
 
 const wait = <T>(data: T): Promise<T> =>
   new Promise((resolve) => window.setTimeout(() => resolve(data), 250));
-
-/** Derived from the live array so the tiles can never disagree with the users table. */
-function metricsFor(source: User[]) {
-  const count = (predicate: (user: User) => boolean) => source.filter(predicate).length;
-  return [
-    { label: 'Total users', value: source.length },
-    { label: 'Active users', value: count((user) => user.status === 'active') },
-    { label: 'Invited', value: count((user) => user.status === 'invited') },
-    { label: 'Admins', value: count((user) => user.role === 'admin') },
-  ];
-}
-
-function rolesFor(source: User[]): RoleCount[] {
-  return ROLES.map((role) => ({ role, count: source.filter((user) => user.role === role).length }));
-}
 
 export const mockApi = {
   login: (email: string) => wait({ name: email.split('@')[0] || 'Admin', email }),
 
   register: (name: string, email: string) => wait({ name, email }),
 
-  getDashboard: (): Promise<DashboardData> => {
-    const snapshot = [...users];
-    return wait({
-      metrics: metricsFor(snapshot),
-      activities: [
-        {
-          title: 'New user invited',
-          detail: 'Jordan Lee was added as a viewer.',
-          time: '2 minutes ago',
-        },
-        {
-          title: 'Profile updated',
-          detail: 'Taylor Kim changed their display name.',
-          time: '1 hour ago',
-        },
-        {
-          title: 'Template initialized',
-          detail: 'Mock data is ready for local development.',
-          time: 'Today',
-        },
-      ],
-      signupsByMonth: SIGNUPS_BY_MONTH,
-      usersByRole: rolesFor(snapshot),
-    });
-  },
+  /** User counts come from the live array, so the tiles cannot disagree with the table. */
+  getDashboard: (): Promise<DashboardSnapshot> =>
+    wait({
+      userCount: users.length,
+      activeUsers: users.filter((user) => user.status === 'active').length,
+      daily: DAILY,
+      trafficSources: TRAFFIC_SOURCES,
+      orders: ORDERS,
+      tasks: TASKS,
+      events: EVENTS,
+    }),
 
   getUsers: () => wait([...users]),
 
