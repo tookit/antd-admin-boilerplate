@@ -35,26 +35,26 @@ antd
 
 推荐主要组件：
 
-| 场景 | 推荐组件 |
-|---|---|
-| 应用布局 | `ProLayout` |
-| 页面容器 | `PageContainer` |
-| 卡片 | `ProCard` / `Card` |
-| 数据表格 | `ProTable` |
-| 查询表单 | `QueryFilter` / `ProForm` |
-| 普通表单 | `ProForm` |
-| 详情展示 | `ProDescriptions` |
-| 指标数据 | `StatisticCard` / `Statistic` |
-| 标签页 | `Tabs` |
-| 抽屉 | `DrawerForm` |
-| 弹窗 | `ModalForm` |
-| 上传 | `Upload` / `ProFormUploadButton` |
-| 时间线 | `Timeline` |
-| 空状态 | `Empty` |
-| 加载状态 | `Spin` / `Skeleton` |
-| 状态标签 | `Tag` / `Badge` |
-| 下拉菜单 | `Dropdown` |
-| 危险操作确认 | `Popconfirm` / `Modal.confirm` |
+| 场景         | 推荐组件                         |
+| ------------ | -------------------------------- |
+| 应用布局     | `ProLayout`                      |
+| 页面容器     | `PageContainer`                  |
+| 卡片         | `ProCard` / `Card`               |
+| 数据表格     | `ProTable`                       |
+| 查询表单     | `QueryFilter` / `ProForm`        |
+| 普通表单     | `ProForm`                        |
+| 详情展示     | `ProDescriptions`                |
+| 指标数据     | `StatisticCard` / `Statistic`    |
+| 标签页       | `Tabs`                           |
+| 抽屉         | `DrawerForm`                     |
+| 弹窗         | `ModalForm`                      |
+| 上传         | `Upload` / `ProFormUploadButton` |
+| 时间线       | `Timeline`                       |
+| 空状态       | `Empty`                          |
+| 加载状态     | `Spin` / `Skeleton`              |
+| 状态标签     | `Tag` / `Badge`                  |
+| 下拉菜单     | `Dropdown`                       |
+| 危险操作确认 | `Popconfirm` / `Modal.confirm`   |
 
 ### 2.2 开发原则
 
@@ -106,25 +106,25 @@ App
 
 ### 4.1 主色
 
-| Token | 建议值 | 用途 |
-|---|---:|---|
+| Token          |    建议值 | 用途                 |
+| -------------- | --------: | -------------------- |
 | `colorPrimary` | `#1677FF` | 主按钮、链接、选中态 |
-| `colorInfo` | `#1677FF` | 信息态 |
-| `colorSuccess` | `#22C55E` | 成功、启用、在线 |
-| `colorWarning` | `#F59E0B` | 警告、待处理 |
-| `colorError` | `#EF4444` | 错误、删除、危险操作 |
+| `colorInfo`    | `#1677FF` | 信息态               |
+| `colorSuccess` | `#22C55E` | 成功、启用、在线     |
+| `colorWarning` | `#F59E0B` | 警告、待处理         |
+| `colorError`   | `#EF4444` | 错误、删除、危险操作 |
 
 ### 4.2 中性色
 
-| 名称 | 色值 | 用途 |
-|---|---:|---|
-| 页面背景 | `#F5F7FB` | 页面整体背景 |
-| 卡片背景 | `#FFFFFF` | 卡片、表格、内容容器 |
-| 一级文字 | `#1F2937` | 标题、关键数据 |
-| 二级文字 | `#6B7280` | 描述、辅助信息 |
-| 三级文字 | `#9CA3AF` | Placeholder、弱提示 |
-| 边框 | `#E5E7EB` | 卡片边界、表格分隔 |
-| Hover 背景 | `#F8FAFC` | 表格行 / 菜单 hover |
+| 名称       |      色值 | 用途                 |
+| ---------- | --------: | -------------------- |
+| 页面背景   | `#F5F7FB` | 页面整体背景         |
+| 卡片背景   | `#FFFFFF` | 卡片、表格、内容容器 |
+| 一级文字   | `#1F2937` | 标题、关键数据       |
+| 二级文字   | `#6B7280` | 描述、辅助信息       |
+| 三级文字   | `#9CA3AF` | Placeholder、弱提示  |
+| 边框       | `#E5E7EB` | 卡片边界、表格分隔   |
+| Hover 背景 | `#F8FAFC` | 表格行 / 菜单 hover  |
 
 ### 4.3 辅助色
 
@@ -146,23 +146,23 @@ font-family:
   Inter,
   -apple-system,
   BlinkMacSystemFont,
-  "Segoe UI",
-  "PingFang SC",
-  "Microsoft YaHei",
+  'Segoe UI',
+  'PingFang SC',
+  'Microsoft YaHei',
   sans-serif;
 ```
 
 ### 5.2 字号
 
-| 场景 | 字号 | 字重 |
-|---|---:|---:|
-| 页面标题 | 24px | 600 |
-| 区块标题 | 18px | 600 |
-| 卡片标题 | 16px | 600 |
-| 正文 | 14px | 400 |
-| 辅助文字 | 12px | 400 |
+| 场景     |    字号 |    字重 |
+| -------- | ------: | ------: |
+| 页面标题 |    24px |     600 |
+| 区块标题 |    18px |     600 |
+| 卡片标题 |    16px |     600 |
+| 正文     |    14px |     400 |
+| 辅助文字 |    12px |     400 |
 | 大型指标 | 24–28px | 600/700 |
-| Button | 14px | 500 |
+| Button   |    14px |     500 |
 
 建议行高：
 
@@ -214,7 +214,7 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 默认：
 
 ```css
-border: 1px solid #E5E7EB;
+border: 1px solid #e5e7eb;
 ```
 
 主要依赖背景和留白建立层级，边框只用于必要结构。
@@ -231,15 +231,15 @@ border: 1px solid #E5E7EB;
 
 推荐：
 
-| 场景 | 间距 |
-|---|---:|
-| 页面上下 padding | 24px |
-| 大区块之间 | 24px |
-| 卡片之间 | 16–24px |
-| 卡片内边距 | 20–24px |
-| Form Item 间距 | 16px |
-| 图标与文字 | 8px |
-| 标题与描述 | 4–8px |
+| 场景             |    间距 |
+| ---------------- | ------: |
+| 页面上下 padding |    24px |
+| 大区块之间       |    24px |
+| 卡片之间         | 16–24px |
+| 卡片内边距       | 20–24px |
+| Form Item 间距   |    16px |
+| 图标与文字       |     8px |
+| 标题与描述       |   4–8px |
 
 ---
 
@@ -457,17 +457,17 @@ Cancel | Save Changes
 
 ## 13. 状态语义
 
-| 状态 | 表现 |
-|---|---|
-| Active | green Badge / Tag |
-| Pending | gold / orange |
-| Processing | blue |
-| Disabled | default / gray |
-| Error | red |
-| Draft | default |
-| Admin | red / volcano |
-| Editor | blue |
-| Viewer | neutral |
+| 状态       | 表现              |
+| ---------- | ----------------- |
+| Active     | green Badge / Tag |
+| Pending    | gold / orange     |
+| Processing | blue              |
+| Disabled   | default / gray    |
+| Error      | red               |
+| Draft      | default           |
+| Admin      | red / volcano     |
+| Editor     | blue              |
+| Viewer     | neutral           |
 
 避免随机颜色，同类状态保持一致。
 

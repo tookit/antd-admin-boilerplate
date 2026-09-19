@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'editor' | 'viewer';
 
-export type UserStatus = 'active' | 'invited';
+export type UserStatus = 'active' | 'invited' | 'inactive' | 'suspended' | 'pending';
 
 export interface User {
   id: number;
@@ -9,10 +9,17 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   createdAt: string;
+  avatar?: string;
+  phone?: string;
+  department?: string;
+  notes?: string;
 }
 
 /** Fields a user form is allowed to submit; the server owns `id` and `createdAt`. */
-export type UserFormValues = Pick<User, 'name' | 'email' | 'role' | 'status'>;
+export type UserFormValues = Pick<
+  User,
+  'name' | 'email' | 'role' | 'status' | 'avatar' | 'phone' | 'department' | 'notes'
+>;
 
 /** Upsert payload: `id` present means update, absent means create. */
 export type UserInput = UserFormValues & Partial<Pick<User, 'id'>>;

@@ -6,11 +6,12 @@ export const APP_CONFIG = {
   logo: '/logo-symbol.svg',
   version: '0.1.0',
   theme: {
+    // Design system §4.1 / §16.
     primaryColor: '#1677FF',
-    infoColor: '#3793d1',
-    successColor: '#37B8A1',
-    warningColor: '#fac864',
-    errorColor: '#eb5454',
+    infoColor: '#1677FF',
+    successColor: '#22C55E',
+    warningColor: '#F59E0B',
+    errorColor: '#EF4444',
   },
 } as const;
 
@@ -37,6 +38,25 @@ export const appTheme: ThemeConfig = {
 };
 
 export const STORAGE_KEYS = { USER: 'antd-admin-boilerplate-user' } as const;
+
+/**
+ * Auxiliary accents (design system §4.3). Stat tiles, chart categories and icon
+ * tints only — never a primary CTA, which is always `colorPrimary`.
+ */
+export const ACCENT_COLORS = {
+  primary: APP_CONFIG.theme.primaryColor,
+  success: APP_CONFIG.theme.successColor,
+  warning: APP_CONFIG.theme.warningColor,
+  error: APP_CONFIG.theme.errorColor,
+  purple: '#8B5CF6',
+  cyan: '#06B6D4',
+  orange: '#F97316',
+} as const;
+
+export type AccentName = keyof typeof ACCENT_COLORS;
+
+/** 8-digit hex: the accent at 12% over any surface, in light or dark mode. */
+export const accentTint = (name: AccentName) => `${ACCENT_COLORS[name]}1F`;
 
 /**
  * Chart chrome. `series` is the brand primary, checked against the white card

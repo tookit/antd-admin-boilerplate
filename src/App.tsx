@@ -20,6 +20,7 @@ function ThemeSurface() {
     '--app-hover': token.colorFillAlter,
     '--app-danger-bg': token.colorErrorBg,
     '--app-danger': token.colorError,
+    '--app-success': token.colorSuccess,
   } as CSSProperties;
   return (
     <div className="app-surface" style={style}>

@@ -6,15 +6,69 @@
 
 保持现有 mock-first 架构。用户 CRUD 为内存数据；品牌、偏好和个人资料为浏览器本地设置。账单、外部集成、密码、2FA、删除账号等需要后端的操作明确显示未接入，不伪装为成功。
 
+品牌可配置：`src/constants/app.ts` 的 `APP_CONFIG` 为默认值，用户可在 Settings 中覆盖并持久化到 `localStorage`。
+
 ## 执行列表
 
-- [x] T0：检查现有改动及设计，单独保存基线，编写任务列表。
-- [x] T1：统一主题、品牌配置与应用外壳。配置名称、Logo、主题色；浅色/深色/系统主题；响应式侧栏、搜索、头像入口；消除重复页面标题。
-- [ ] T2：用户管理。统计卡、独立筛选、状态、头像、DrawerForm、详情、复制、批量操作和 CSV 导出；保留已有 invited 状态。
-- [ ] T3：Dashboard。日期联动指标、收入/订单趋势、流量环图、最近订单、待办、迷你日历；保留用户分析入口与图表无障碍数据。
-- [ ] T4：Settings。组织信息、Logo、地区、主题实时预览及保存/取消、偏好、通知、集成状态、账单和安全入口；URL 同步 Tab。
-- [ ] T5：Profile 与 Security。资料编辑和头像、技能、活动；安全状态、设备/会话、本地通知偏好及后端功能边界。
-- [ ] T6：验证与交付。静态检查、构建、核心逻辑回归、桌面/移动端浏览器检查；更新使用说明与任务结果，提交代码。
+### T1 统一主题、品牌配置与应用外壳（已完成，提交 `6d22073`）
+
+- [x] 配置名称、Logo、主题色；浅色/深色/系统主题；响应式侧栏、搜索、头像入口；消除重复页面标题。
+
+### T2 用户管理（已完成）
+
+- [x] T2a 修复 `QueryFilter` 的 `span` 类型错误，表格 `scroll={{ x: 900 }}`，工具栏与批量提示文案对齐规范。
+- [x] T2b 统计卡补齐趋势/占比（Total / Active / Admins / Editors），桌面四列、平板两列、移动单列。
+- [x] T2c 详情抽屉按 Basic Information / Role & Permissions / Account Status 分区；新建/编辑抽屉补头像字段。
+- [x] T2d 空状态与操作反馈文案对齐规范。
+
+### T3 Dashboard 页头与指标
+
+- [ ] `PageContainer` + 描述 + `DatePicker.RangePicker`，日期变化刷新指标、图表、订单。
+- [ ] 四张 KPI 卡：Total Users / Revenue / Orders / Conversion Rate，含图标着色、数值、环比与正负趋势色。
+- [ ] 加载用 `Skeleton`。
+
+### T4 Dashboard 图表
+
+- [ ] Revenue Overview：Area + Line，Revenue / Orders 切换（`Segmented`），Monthly / Weekly / Daily（`Select`），随日期范围联动。
+- [ ] Traffic Sources：环形图，中心显示 Total Visits，右侧图例含占比，6 个来源。
+- [ ] 两张图各自配 `ChartDataTable`，遵守 `CHART_TOKENS`、`NO_ENTRY_ANIMATION`、单测度单色相规则。
+
+### T5 Dashboard 底部区块
+
+- [ ] Recent Orders：`ProTable` 最近 5 条，状态 Tag（Paid/Processing/Pending/Failed），操作收进 `Dropdown`，卡片右上 View All。
+- [ ] My Tasks：`List` + `Checkbox` + 优先级 Tag，勾选后置灰并提示。
+- [ ] Calendar：`Calendar` mini 模式，选中日期下方展示当天事件。
+
+### T6 Settings
+
+- [ ] `PageContainer` + `Tabs`（General / Preferences / Notifications / Integrations），Tab 与 URL `?tab=` 双向同步，刷新保持。
+- [ ] General：组织信息（含 Logo）、语言与地区、外观（主题 / 主题色 / 侧栏，实时预览）、Plan & Billing（`Progress` 用量）、Account Security 快捷入口、Danger Zone（输入 DELETE 二次确认）。
+- [ ] Preferences：默认分页、紧凑模式、表格密度、落地页。
+- [ ] Notifications：邮件/推送/系统/摘要频率，自动保存。
+- [ ] Integrations：卡片列表与连接状态，未接入的标注为未接入而非成功。
+- [ ] General 底部 sticky footer：Cancel / Save Changes，脏状态才启用，保存后持久化并提示。
+
+### T7 Profile
+
+- [ ] 顶部概览卡：头像（在线 Badge）、姓名、角色 Tag、联系方式、签名、四项统计。
+- [ ] 编辑资料表单（两列，移动单列）＋ Profile Completeness 进度。
+- [ ] Profile Photo 上传卡（JPG/PNG/GIF，≤5MB）、Social Links（URL 校验）、Skills & Interests（`mode="tags"`，上限 10）。
+- [ ] Recent Activity 列表。
+
+### T8 Security
+
+- [ ] 顶部 Security Summary：`Progress type="circle"` 安全分。
+- [ ] Change Password：强度指示与校验；后端未接入时明确提示。
+- [ ] Two-Factor Authentication：`Switch` + `QRCode` + `Input.OTP` 引导，恢复码需二次验证。
+- [ ] Trusted Devices 与 Active Sessions：`List`、当前设备标识、移除二次确认、Sign Out All 红色按钮 + 确认。
+- [ ] Recent Login Activity：`ProTable`，成功/失败状态与异常登录提示。
+- [ ] Security Notifications：自动保存并轻提示。
+
+### T9 路由、验证与交付
+
+- [ ] `routeDefinitions.tsx` 增加 profile / security / settings，修正侧栏菜单。
+- [ ] `pnpm type-check`、`pnpm lint`、`pnpm build` 通过。
+- [ ] 桌面 / 平板 / 移动端检查核心流程；更新 README 与 CLAUDE.md。
 
 ## 提交策略
 
@@ -22,5 +76,6 @@
 
 ## 验证记录
 
-待执行。重点覆盖双条件筛选、CRUD 后统计刷新、导出转义、主题保存/取消及刷新恢复、设置 Tab 深链接、移动端侧栏与横向滚动。
-
+- 双条件筛选、CRUD 后统计刷新、导出转义、批量操作。
+- 主题保存/取消及刷新恢复、设置 Tab 深链接。
+- 移动端侧栏与表格横向滚动。

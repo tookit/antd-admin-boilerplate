@@ -56,9 +56,7 @@ PageContainer
 <PageContainer
   title="Dashboard"
   subTitle="Welcome back! Here's what's happening with your business today."
-  extra={[
-    <DatePicker.RangePicker />
-  ]}
+  extra={[<DatePicker.RangePicker />]}
 />
 ```
 
@@ -110,12 +108,12 @@ Mobile：
 
 指标：
 
-| Metric | Icon | Accent |
-|---|---|---|
-| Total Users | UserOutlined | Blue |
-| Revenue | WalletOutlined | Green |
-| Orders | ShoppingCartOutlined | Red/Orange |
-| Conversion Rate | BarChartOutlined | Purple |
+| Metric          | Icon                 | Accent     |
+| --------------- | -------------------- | ---------- |
+| Total Users     | UserOutlined         | Blue       |
+| Revenue         | WalletOutlined       | Green      |
+| Orders          | ShoppingCartOutlined | Red/Orange |
+| Conversion Rate | BarChartOutlined     | Purple     |
 
 趋势：
 
@@ -198,15 +196,7 @@ Paid Ads          2%
 推荐字段：
 
 ```ts
-[
-  '#',
-  'Customer',
-  'Product',
-  'Amount',
-  'Status',
-  'Created At',
-  'Actions'
-]
+['#', 'Customer', 'Product', 'Amount', 'Status', 'Created At', 'Actions'];
 ```
 
 Status：

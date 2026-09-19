@@ -44,7 +44,7 @@ export function useProTable<T, U extends ParamsType = ParamsType>({
         filterType: 'query' as const,
         defaultCollapsed: false,
       },
-      pagination: { pageSize: 10, showSizeChanger: true, showQuickJumper: true },
+      pagination: { defaultPageSize: 10, showSizeChanger: true, showQuickJumper: true },
       options: { density: true, fullScreen: true, setting: true },
     },
   };

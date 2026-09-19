@@ -59,7 +59,7 @@ PageContainer
   extra={[
     <Button type="primary" icon={<PlusOutlined />}>
       New User
-    </Button>
+    </Button>,
   ]}
 />
 ```
@@ -119,19 +119,13 @@ Status
 ### Display Name
 
 ```tsx
-<ProFormText
-  name="displayName"
-  label="Display name"
-/>
+<ProFormText name="displayName" label="Display name" />
 ```
 
 ### Email
 
 ```tsx
-<ProFormText
-  name="email"
-  label="Email"
-/>
+<ProFormText name="email" label="Email" />
 ```
 
 ### Role
@@ -163,11 +157,7 @@ Pending
 建议：
 
 ```tsx
-<ProTable<User>
-  rowKey="id"
-  search={false}
-  pagination={{ pageSize: 10 }}
-/>
+<ProTable<User> rowKey="id" search={false} pagination={{ pageSize: 10 }} />
 ```
 
 Columns：
