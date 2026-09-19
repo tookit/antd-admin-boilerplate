@@ -23,6 +23,11 @@ export default function MainLayout() {
   const { settings, preview } = useSettings();
   const { token } = theme.useToken();
   const [search, setSearch] = useState('');
+  /*
+   * No `locale` on `ProConfigProvider`: it has no such prop (it takes `intl`), and
+   * ProComponents derives its own intl from the antd `ConfigProvider` above us —
+   * which is why `localeFor` has to return a locale whose `.locale` key is real.
+   */
   return (
     <ProConfigProvider hashed={false}>
       <ProLayout

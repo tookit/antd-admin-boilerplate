@@ -1,4 +1,14 @@
 import type { ThemeConfig } from 'antd';
+/**
+ * Import the ESM locale modules, not `antd/locale/*`. Those files are CJS
+ * (`module.exports = require(...)`), and the interop wrapper Vite hands back puts
+ * the locale one level down under `default` — so `locale.locale` reads as
+ * undefined, antd silently falls back to its built-in English, and ProComponents
+ * maps that undefined straight to its zh-CN intl.
+ */
+import enUS from 'antd/es/locale/en_US';
+import jaJP from 'antd/es/locale/ja_JP';
+import zhCN from 'antd/es/locale/zh_CN';
 
 /** Change these values to rebrand the boilerplate. */
 export const APP_CONFIG = {
@@ -41,6 +51,16 @@ export const STORAGE_KEYS = {
   USER: 'antd-admin-boilerplate-user',
   PROFILE: 'antd-admin-boilerplate-profile',
 } as const;
+
+const LOCALES = { 'en-US': enUS, 'zh-CN': zhCN, 'ja-JP': jaJP } as const;
+
+/**
+ * The locale the language setting maps to. This has to reach both `ConfigProvider`
+ * *and* `ProConfigProvider`: ProComponents keeps its own `intl` and only falls back
+ * to the antd locale when it is handed one, so a layout that skips this renders
+ * antd in English and ProComponents in Chinese.
+ */
+export const localeFor = (language: string) => LOCALES[language as keyof typeof LOCALES] ?? enUS;
 
 /**
  * Auxiliary accents (design system §4.3). Stat tiles, chart categories and icon
