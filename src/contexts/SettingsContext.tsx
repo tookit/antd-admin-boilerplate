@@ -23,6 +23,14 @@ export const DEFAULT_SETTINGS = {
   pushNotifications: false,
   systemNotifications: true,
   digest: 'weekly',
+  // Account security. Real enforcement needs a backend; these only record intent.
+  twoFactor: false,
+  loginNotifications: true,
+  securityNewLogin: true,
+  securityAccountChanges: true,
+  securitySuspicious: true,
+  securityTwoFactorAlerts: false,
+  securityWeeklyReport: true,
 };
 export type Settings = typeof DEFAULT_SETTINGS;
 const KEY = 'adminpro-settings';

@@ -37,7 +37,10 @@ export const appTheme: ThemeConfig = {
   components: { Card: { headerFontSize: 16 }, Table: { headerBg: '#F8FAFC' } },
 };
 
-export const STORAGE_KEYS = { USER: 'antd-admin-boilerplate-user' } as const;
+export const STORAGE_KEYS = {
+  USER: 'antd-admin-boilerplate-user',
+  PROFILE: 'antd-admin-boilerplate-profile',
+} as const;
 
 /**
  * Auxiliary accents (design system §4.3). Stat tiles, chart categories and icon

@@ -24,6 +24,71 @@ export type UserFormValues = Pick<
 /** Upsert payload: `id` present means update, absent means create. */
 export type UserInput = UserFormValues & Partial<Pick<User, 'id'>>;
 
+/** Editable profile. Browser-local, like the rest of the demo's personal state. */
+export interface Profile {
+  fullName: string;
+  displayName: string;
+  email: string;
+  phone: string;
+  company: string;
+  jobTitle: string;
+  location: string;
+  timezone: string;
+  joinedAt: string;
+  bio: string;
+  website: string;
+  linkedin: string;
+  github: string;
+  twitter: string;
+  skills: string[];
+  avatar?: string;
+}
+
+export interface ProfileActivity {
+  id: number;
+  title: string;
+  detail: string;
+  time: string;
+}
+
+export interface ProfileStats {
+  teamMembers: number;
+  projects: number;
+  contributions: number;
+  daysActive: number;
+}
+
+export interface ProfileSnapshot {
+  profile: Profile;
+  activities: ProfileActivity[];
+  stats: ProfileStats;
+}
+
+export interface TrustedDevice {
+  id: number;
+  name: string;
+  detail: string;
+  location: string;
+  lastActive: string;
+  current: boolean;
+}
+
+export interface LoginRecord {
+  id: number;
+  device: string;
+  location: string;
+  ip: string;
+  at: string;
+  success: boolean;
+}
+
+export interface SecuritySnapshot {
+  devices: TrustedDevice[];
+  sessions: TrustedDevice[];
+  logins: LoginRecord[];
+  otpUrl: string;
+}
+
 /** One day of business activity. The dashboard series are aggregated from these. */
 export interface DailyPoint {
   date: string;
