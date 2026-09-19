@@ -42,36 +42,40 @@
 - [x] Calendar：`Calendar` mini 模式，有事件的日期带圆点，选中日期下方展示当天事件。
 - 说明：订单页不在本次范围内，View All 置灰并注明；Orders/View/Refund 操作提示需要后端。
 
-### T6 Settings
+### T6 Settings（已完成）
 
-- [ ] `PageContainer` + `Tabs`（General / Preferences / Notifications / Integrations），Tab 与 URL `?tab=` 双向同步，刷新保持。
-- [ ] General：组织信息（含 Logo）、语言与地区、外观（主题 / 主题色 / 侧栏，实时预览）、Plan & Billing（`Progress` 用量）、Account Security 快捷入口、Danger Zone（输入 DELETE 二次确认）。
-- [ ] Preferences：默认分页、紧凑模式、表格密度、落地页。
-- [ ] Notifications：邮件/推送/系统/摘要频率，自动保存。
-- [ ] Integrations：卡片列表与连接状态，未接入的标注为未接入而非成功。
-- [ ] General 底部 sticky footer：Cancel / Save Changes，脏状态才启用，保存后持久化并提示。
+- [x] `PageContainer` + `Tabs`（General / Preferences / Notifications / Integrations），Tab 与 URL `?tab=` 双向同步，刷新保持。
+- [x] General：组织信息（含 Logo）、语言与地区、外观（主题 / 主题色 / 侧栏，实时预览）、Plan & Billing（`Progress` 用量）、Account Security 快捷入口、Danger Zone（输入 DELETE 二次确认）。
+- [x] Preferences：默认分页、紧凑模式、表格密度、落地页。
+- [x] Notifications：邮件/推送/系统/摘要频率，自动保存。
+- [x] Integrations：卡片列表与连接状态，未接入的标注为未接入而非成功。
+- [x] General 底部 sticky footer：Cancel / Save Changes，脏状态才启用，保存后持久化并提示。
+- 说明：General / Preferences 走 `SettingsContext` 的 preview/save/cancel 暂存编辑，外观项实时预览；未点保存就离开页面的改动不落盘。Logo 改为填 URL / `public/` 路径而非上传（上传需要文件存储）。
 
-### T7 Profile
+### T7 Profile（已完成）
 
-- [ ] 顶部概览卡：头像（在线 Badge）、姓名、角色 Tag、联系方式、签名、四项统计。
-- [ ] 编辑资料表单（两列，移动单列）＋ Profile Completeness 进度。
-- [ ] Profile Photo 上传卡（JPG/PNG/GIF，≤5MB）、Social Links（URL 校验）、Skills & Interests（`mode="tags"`，上限 10）。
-- [ ] Recent Activity 列表。
+- [x] 顶部概览卡：头像（在线 Badge）、姓名、角色 Tag、联系方式、签名、四项统计。
+- [x] 编辑资料表单（两列，移动单列）＋ Profile Completeness 进度。
+- [x] Profile Photo 上传卡（JPG/PNG/GIF，≤5MB）、Social Links（URL 校验）、Skills & Interests（`mode="tags"`，上限 10）。
+- [x] Recent Activity 列表。
+- 说明：Completeness 为「已填字段 / 总字段」，非隐藏权重；照片以 data URL 存入 `localStorage`，超出配额会提示。资料持久化在 `STORAGE_KEYS.PROFILE`，与 AuthContext 的登录用户相互独立。
 
-### T8 Security
+### T8 Security（已完成）
 
-- [ ] 顶部 Security Summary：`Progress type="circle"` 安全分。
-- [ ] Change Password：强度指示与校验；后端未接入时明确提示。
-- [ ] Two-Factor Authentication：`Switch` + `QRCode` + `Input.OTP` 引导，恢复码需二次验证。
-- [ ] Trusted Devices 与 Active Sessions：`List`、当前设备标识、移除二次确认、Sign Out All 红色按钮 + 确认。
-- [ ] Recent Login Activity：`ProTable`，成功/失败状态与异常登录提示。
-- [ ] Security Notifications：自动保存并轻提示。
+- [x] 顶部 Security Summary：`Progress type="circle"` 安全分。
+- [x] Change Password：强度指示与校验；后端未接入时明确提示。
+- [x] Two-Factor Authentication：`Switch` + `QRCode` + `Input.OTP` 引导，恢复码需二次验证。
+- [x] Trusted Devices 与 Active Sessions：`List`、当前设备标识、移除二次确认、Sign Out All 红色按钮 + 确认。
+- [x] Recent Login Activity：成功/失败状态与异常登录提示。
+- [x] Security Notifications：自动保存并轻提示。
+- 说明：安全分由本页开关实算（40 基础分 + 2FA 30 + 三个开关各 10），无隐藏公式。登录记录表用 antd `Table` 而非 `ProTable`——此处只需要只读分页表，`ProTable` 的 search/toolbar 反而多余。改密码、验证 OTP、移除设备、登出全部拒绝并说明需要后端，不伪装成功。
 
-### T9 路由、验证与交付
+### T9 路由、验证与交付（已完成）
 
-- [ ] `routeDefinitions.tsx` 增加 profile / security / settings，修正侧栏菜单。
-- [ ] `pnpm type-check`、`pnpm lint`、`pnpm build` 通过。
-- [ ] 桌面 / 平板 / 移动端检查核心流程；更新 README 与 CLAUDE.md。
+- [x] `routeDefinitions.tsx` 增加 profile / security / settings，修正侧栏菜单。
+- [x] `pnpm type-check`、`pnpm lint`、`pnpm build` 通过。
+- [x] 桌面 / 平板 / 移动端检查核心流程；更新 README 与 CLAUDE.md。
+- 说明：`/` 现在跳 `settings.landingPage`，不再写死 `/dashboard`。响应式靠栅格断点与 `scroll={{ x }}` 保证，未做真机/浏览器截图验证（本会话 chrome-devtools MCP 连接失败，见下方验证记录）。
 
 ## 提交策略
 
@@ -82,3 +86,5 @@
 - 双条件筛选、CRUD 后统计刷新、导出转义、批量操作。
 - 主题保存/取消及刷新恢复、设置 Tab 深链接。
 - 移动端侧栏与表格横向滚动。
+
+以上为设计意图，尚未在真实浏览器中逐条走查：本会话 `chrome-devtools` MCP 连接失败（`Connection closed`），无法截图或操作页面。已执行的验证只有 `pnpm type-check`、`pnpm lint`、`pnpm build`（均通过，构建仅剩既有的 >500 kB chunk 警告）。改动合并前需人工在浏览器中过一遍。

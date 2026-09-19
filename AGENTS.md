@@ -7,7 +7,7 @@ This is a React 19, TypeScript, Vite, and Ant Design admin starter with in-memor
 - `src/pages/` groups screens and related components by feature; `src/layouts/` contains auth and admin shells.
 - `src/routes/routeDefinitions.tsx` defines routes and sidebar metadata. Use relative paths such as `users`.
 - `src/api/modules/*.api.ts` adapts `src/mocks/api.ts`; pages consume adapters, never mocks directly. Preserve the shared `PaginatedResponse<T>` contract in `src/types/`.
-- `src/hooks/` contains reusable hooks, including `useProTable`; `src/contexts/` holds authentication state.
+- `src/hooks/` contains reusable hooks, including `useProTable`; `src/contexts/` holds authentication state (`AuthContext`) and branding/preferences (`SettingsContext`).
 - `src/constants/app.ts` configures branding and Ant Design tokens. LESS lives in `src/styles/`; keep `variables.less` first in `index.less`.
 - `public/` contains static assets; `design/` contains visual references. Production output goes to `dist/`.
 
@@ -33,7 +33,7 @@ No test runner, test naming convention, coverage threshold, or CI workflow is co
 
 ## Commit & Pull Request Guidelines
 
-History currently contains only `chore: initial commit`. Follow that type-prefixed style, for example `fix: refresh users after deletion`. Keep changes focused. PRs should describe behavior, reference relevant issues, list verification performed, and include screenshots for visual changes.
+Follow the existing type-prefixed style, for example `feat: rebuild the dashboard against the design spec` or `fix: refresh users after deletion`. Keep changes focused, and commit one item of `UI_REFINE_TASK.md` at a time. PRs should describe behavior, reference relevant issues, list verification performed, and include screenshots for visual changes.
 
 ## Security & Configuration
 

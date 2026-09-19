@@ -21,9 +21,9 @@ pnpm is the package manager (`packageManager` field pins the version; `pnpm-lock
 
 ## Current work
 
-`UI_REFINE_TASK.md` is the live task ledger (Chinese): T0–T6, checkbox per task, with the scope rules and the verification list for each phase. `design/adminpro-design-docs/*.md` (dashboard, user-management, settings, profile, security, design) plus `design/*.png` are the specs those tasks implement; `PRODUCT.md` holds audience, brand personality, anti-references, and accessibility requirements. Read both before building UI. Work is committed one task at a time with a `feat:` / `fix:` / `docs:` prefix and is not pushed.
+`UI_REFINE_TASK.md` is the task ledger (Chinese): T1–T9, checkbox per task, with the scope rules and the verification list for each phase. All nine are checked off; each carries a 说明 note where the implementation departs from the literal spec. `design/adminpro-design-docs/*.md` (dashboard, user-management, settings, profile, security, design) plus `design/*.png` are the specs those tasks implement; `PRODUCT.md` holds audience, brand personality, anti-references, and accessibility requirements. Read both before building UI. Work is committed one task at a time with a `feat:` / `fix:` / `docs:` prefix and is not pushed.
 
-Generated so far: Dashboard, User management, and shared shell/branding. Settings, Profile, and Security are not built yet — `MainLayout` already links to `/profile` and `/settings`, so those URLs land on NotFound until T4/T5 land.
+Built: Dashboard, User management, Profile, Security, Settings, and the shared shell/branding. `Role Management` and `Permission` appear in the design but have no spec, so no routes were created for them. Nothing has been verified in a real browser — automated checks only.
 
 `AGENTS.md` restates this file for other agents; keep the overlapping parts in sync.
 
@@ -45,7 +45,7 @@ To connect a real backend, rewrite layer 2 and keep the `PaginatedResponse<T>` c
 
 Adding a page = add one entry to `routeDefinitions.tsx`. Paths are relative (`'users'`, not `'/users'`) because they nest under layout routes; `MainLayout` re-prefixes them with `/` for menu keys.
 
-`AuthGuard` in `routes/index.tsx` wraps the whole `MainLayout` branch and redirects to `/login` when unauthenticated.
+`AuthGuard` in `routes/index.tsx` wraps the whole `MainLayout` branch and redirects to `/login` when unauthenticated. `/` redirects to `settings.landingPage` — not a literal `'/dashboard'` — so the landing page stays configurable from Settings.
 
 ### Auth is a stub, settings are real preferences
 
@@ -64,7 +64,7 @@ The chain in `src/App.tsx` is load-bearing — each layer needs the one above it
 
 `src/styles/index.less` is imported once in `main.tsx` and is the only entry point; it `@import`s `variables.less` first, then `global.less`, `main-layout.less`, `auth-layout.less`. Partial files do **not** import `variables.less` themselves and rely on that ordering — a new `.less` file added to `index.less` before the variables import will fail to compile.
 
-Class names shared between LESS and components (`.header-brand`, `.page-users`, `.auth-switch`, `.route-loader`, `.layout-version`, `.section-card`, `.section-stack`, `.metric-card`, `.metric-icon`, `.save-footer`, `.setting-row`, `.danger-card`, `.sr-only`) are the coupling point; renaming one side breaks the other silently.
+Class names shared between LESS and components (`.header-brand`, `.page-users`, `.auth-switch`, `.route-loader`, `.layout-version`, `.section-card`, `.section-stack`, `.metric-card`, `.metric-icon`, `.metric-trend`, `.card-controls`, `.donut-*`, `.order-customer`, `.task-item`, `.settings-grid`, `.card-head`, `.setting-icon`, `.plan-summary`, `.profile-meta`, `.profile-stats`, `.row-warning`, `.save-footer`, `.setting-row`, `.danger-card`, `.sr-only`) are the coupling point; renaming one side breaks the other silently.
 
 ### Tables
 
@@ -91,7 +91,8 @@ Rules the existing charts follow, and new ones should too:
 - **Every chart ships a `ChartDataTable`.** It renders the same numbers as an `.sr-only` table (class in `global.less`), so no value is reachable only by hovering.
 - **Spread `NO_ENTRY_ANIMATION` into every plot.** The entry animation is decorative, and G2 ignores `prefers-reduced-motion`. It has to be spread from a variable rather than written as a prop — see the comment on the constant.
 - **Labels go outside the mark.** A label at `position: 'top'` lands _on_ the bar's top edge and renders dark gray over the fill; `dy: -18` lifts it clear. Watch for this on any new labelled chart.
-- Chart data is derived in `src/mocks/api.ts` from the live `users` array (`metricsFor`, `rolesFor`) rather than hardcoded, so tiles and charts cannot drift apart.
+- Chart data comes from the seeded 365-day series (`buildDaily`) in `src/mocks/api.ts`, so the KPIs and the charts are computed from one source and reloading does not reshuffle them. Do not reintroduce a hardcoded percentage — the old `metricsFor`/`rolesFor` pair that read the `users` array is gone.
+- **The donut is the exception to "one measure = one hue".** Traffic sources encode identity, so `TrafficSources.tsx` uses `CHART_TOKENS.categorical` — a fixed six-hue order, validated for colour-vision separation against both card surfaces. Assign the hues in order and never cycle them: a seventh source folds into "Other" rather than borrowing a hue.
 
 `height` on a plot includes the axis band — do not add a height that assumes the axis lives outside it, and do not give the card a fixed height that clips it.
 
@@ -105,6 +106,6 @@ Rules the existing charts follow, and new ones should too:
 
 ## Known gaps
 
-- `src/pages/dashboard/DashboardPage.tsx` still renders its own `Typography.Title level={2}` instead of a `PageContainer` like User management's — T1's "no duplicate page titles" pass stopped short of it.
 - No error boundary — an unexpected render error blanks the page.
 - The mock `users` array is module state, so it is shared across tabs and reset on reload.
+- Nothing has been checked in a browser. `pnpm type-check`, `pnpm lint` and `pnpm build` pass, but layout, dark mode and the responsive breakpoints are unverified — the `chrome-devtools` MCP server failed to connect in the session that built these screens.

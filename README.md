@@ -51,15 +51,25 @@ Paths are relative (`users`, not `/users`) because they nest under a layout rout
 
 `src/contexts/AuthContext.tsx` keeps `{ name, email }` in `sessionStorage` — no token, no server call, no role enforcement. `UserRole` exists only for display. Replace the context when you add real auth.
 
+### Screens
+
+Dashboard, User Management, Profile, Security and Settings are implemented. `Role Management` and `Permission` appear in the design but have no spec and no route — they were left out rather than shipped as empty pages.
+
+### Local state, and what is deliberately not wired
+
+`src/contexts/SettingsContext.tsx` holds branding and preferences in `localStorage` — theme, primary color, logo, landing page, table density, notification switches. `GeneralTab` and `PreferencesTab` stage edits through `preview()` and only `save()` writes them; `cancel()` rolls back. Keys are validated on read by `readPreferences` in `src/utils/storage.ts`, which drops anything that is not a known key with the right type — a new persisted setting has to be added to `DEFAULT_SETTINGS` or it will silently disappear.
+
+Profile data persists separately under `STORAGE_KEYS.PROFILE`. Changing a password, enabling 2FA, removing a device, signing out other sessions, connecting an integration, billing and account deletion all need a server, so they explain that and refuse — none of them report success. Keep that property when touching those screens: a demo that fakes a password change teaches the wrong thing.
+
 ### Tables
 
 `src/hooks/useProTable.ts` centralizes the ProTable setup — pagination, search, toolbar options, `PaginatedResponse` unwrapping — and reads `message` from `App.useApp()` so toasts inherit the configured theme. Use it for new list screens. Columns for the users table live in `src/pages/users/UserColumn.tsx`.
 
 ### Charts
 
-The dashboard plots two of the same figures the rest of the page shows — signups per month, and users per role. Both are derived in `src/mocks/api.ts` from the live `users` array, so the tiles and the charts can never disagree.
+The dashboard plots revenue and orders over the selected range, plus traffic by source. The numbers come from a seeded 365-day series in `src/mocks/api.ts`, so the KPIs (and their change against the previous equal-length window) are computed rather than hardcoded, and reloading does not reshuffle them.
 
-Charts use `@ant-design/plots`. Each one is a small component in `src/pages/dashboard/` that owns its mark spec, and every chart is paired with `ChartDataTable` — a `.sr-only` table holding the same numbers, because a tooltip must never be the only way to read a value. Colours come from `CHART_TOKENS` in `src/constants/app.ts`; both charts plot one measure, so both use the single brand hue rather than a per-category palette.
+Charts use `@ant-design/plots`. Each one is a small component in `src/pages/dashboard/` that owns its mark spec, and every chart is paired with `ChartDataTable` — a `.sr-only` table holding the same numbers, because a tooltip must never be the only way to read a value. Colours come from `CHART_TOKENS` in `src/constants/app.ts`: the area chart plots one measure, so it uses the single brand hue; the donut encodes identity, so it uses `CHART_TOKENS.categorical`, a fixed six-hue order validated for colour-vision separation against both card surfaces. Assign those hues in order and never cycle them.
 
 Entry animation is off. It is decorative, and G2 does not honour `prefers-reduced-motion`.
 
