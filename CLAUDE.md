@@ -15,9 +15,17 @@ pnpm format         # prettier --write .
 pnpm format:check
 ```
 
-pnpm is the package manager (`packageManager` field pins the version; `pnpm-lock.yaml` is the only lockfile). There is no test runner — `pnpm type-check`, `pnpm lint`, and `pnpm build` are the available checks. Run them after changes.
+pnpm is the package manager (`packageManager` field pins the version; `pnpm-lock.yaml` is the only lockfile). No test runner, no CI — `pnpm type-check`, `pnpm lint`, and `pnpm build` are the available checks. Run them after changes.
 
 `@vitejs/plugin-react@6` and `vite@8` are required together (the plugin peers on `^8.0.0`). Vite 8 is Rolldown-based — consult rolldown documentation, not esbuild, when touching build config.
+
+## Current work
+
+`UI_REFINE_TASK.md` is the live task ledger (Chinese): T0–T6, checkbox per task, with the scope rules and the verification list for each phase. `design/adminpro-design-docs/*.md` (dashboard, user-management, settings, profile, security, design) plus `design/*.png` are the specs those tasks implement; `PRODUCT.md` holds audience, brand personality, anti-references, and accessibility requirements. Read both before building UI. Work is committed one task at a time with a `feat:` / `fix:` / `docs:` prefix and is not pushed.
+
+Generated so far: Dashboard, User management, and shared shell/branding. Settings, Profile, and Security are not built yet — `MainLayout` already links to `/profile` and `/settings`, so those URLs land on NotFound until T4/T5 land.
+
+`AGENTS.md` restates this file for other agents; keep the overlapping parts in sync.
 
 ## Architecture
 
@@ -29,7 +37,7 @@ pnpm is the package manager (`packageManager` field pins the version; `pnpm-lock
 
 To connect a real backend, rewrite layer 2 and keep the `PaginatedResponse<T>` contract so `useProTable` and the tables keep working.
 
-`UserInput` and `UserFormValues` in `src/types/index.ts` are the shared shapes: `UserInput` is the upsert payload (`id` present means update), `UserFormValues` the form subset the client may submit.
+`UserInput` and `UserFormValues` in `src/types/index.ts` are the shared shapes: `UserInput` is the upsert payload (`id` present means update), `UserFormValues` the form subset the client may submit. Both are `Pick`s of `User`, so widening the entity's form fields is a one-line change there.
 
 ### Routes are declared once, consumed twice
 
@@ -39,17 +47,39 @@ Adding a page = add one entry to `routeDefinitions.tsx`. Paths are relative (`'u
 
 `AuthGuard` in `routes/index.tsx` wraps the whole `MainLayout` branch and redirects to `/login` when unauthenticated.
 
-### Auth
+### Auth is a stub, settings are real preferences
 
-`src/contexts/AuthContext.tsx` holds a mock user (`{ name, email }`, no token) persisted in **`sessionStorage`** under `STORAGE_KEYS.USER`. The initial state is read synchronously via a lazy `useState` initializer, so there is no loading state and no flash. `sessionStorage` is user-writable, so `readStoredUser` parses defensively.
+`src/contexts/AuthContext.tsx` holds a mock user (`{ name, email }`, no token) persisted in **`sessionStorage`** under `STORAGE_KEYS.USER`. The initial state is read synchronously via a lazy `useState` initializer, so there is no loading state and no flash. `sessionStorage` is user-writable, so `readStoredUser` parses defensively. `login` accepts any email; no real validation, no role enforcement — `UserRole` is display only.
 
-`login` accepts any email; there is no real validation and no role enforcement — `UserRole` exists for display only.
+`src/contexts/SettingsContext.tsx` is the second context and behaves differently on purpose: it keeps `settings` (what the UI renders) and `saved` (what is persisted) apart, so a settings screen can `preview()` live, then `save()` or `cancel()`. It persists to **`localStorage`** through `readPreferences` in `src/utils/storage.ts`, which copies only keys present in `DEFAULT_SETTINGS` **and** matching the default's `typeof` — a new setting needs an entry in `DEFAULT_SETTINGS` or it will be silently dropped on reload. `DEFAULT_SETTINGS` is seeded from `APP_CONFIG`, so `App.tsx` sets `document.title` from it.
+
+### Theming: one runtime source, bridged to CSS
+
+The chain in `src/App.tsx` is load-bearing — each layer needs the one above it:
+
+`SettingsProvider` → `ThemedApp` (`ConfigProvider`: `appTheme` plus dark/compact algorithms, locale, `settings.primaryColor` overriding the token) → `ThemeSurface` (`theme.useToken()` writes the antd tokens onto `--app-*` CSS variables on `.app-surface`) → `<AntdApp>` → `AuthProvider` → `Router`.
+
+- `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) feeds `appTheme`. This is the rebrand entry point. `CHART_TOKENS` reads `series` from the same primary color, so changing the brand color moves the charts too — re-check that hue against the white card surface before shipping it.
+- `src/styles/variables.less` — does **not** duplicate the palette. Its LESS variables alias the `--app-*` CSS variables that `ThemeSurface` sets at runtime, which is why hand-written CSS follows dark mode and the user's chosen primary color for free. A literal hex in a `.less` file opts that rule out of theming; use the alias.
+
+`src/styles/index.less` is imported once in `main.tsx` and is the only entry point; it `@import`s `variables.less` first, then `global.less`, `main-layout.less`, `auth-layout.less`. Partial files do **not** import `variables.less` themselves and rely on that ordering — a new `.less` file added to `index.less` before the variables import will fail to compile.
+
+Class names shared between LESS and components (`.header-brand`, `.page-users`, `.auth-switch`, `.route-loader`, `.layout-version`, `.section-card`, `.section-stack`, `.metric-card`, `.metric-icon`, `.save-footer`, `.setting-row`, `.danger-card`, `.sr-only`) are the coupling point; renaming one side breaks the other silently.
 
 ### Tables
 
 `src/hooks/useProTable.ts` centralizes ProTable props (pagination, search, toolbar, `PaginatedResponse` unwrapping). The `request` callback is wrapped in `useCallback` deliberately: ProTable treats a changed `request` identity as a refetch trigger. It reads `message` from `App.useApp()` rather than importing antd's static `message`, so toasts inherit the `ConfigProvider` theme — any component using `App.useApp()` must render inside the `<AntdApp>` wrapper in `src/App.tsx`.
 
-User table columns live in `src/pages/users/UserColumn.tsx` (a `use*Columns` hook returning `ProColumns<User>[]`), row actions in `src/pages/users/UserActions.tsx`. Drawer CRUD follows `src/pages/users/UserList.tsx`: one `Form.useForm`, an `editing` record in state, `resetFields()` before populating, and `actionRef.current?.reload()` after a mutation.
+`src/pages/users/UserList.tsx` is the reference list screen, and the pattern it establishes is the one to copy:
+
+- Filters live in a standalone `QueryFilter` above the table, not in ProTable's built-in search form (`search={false}` on the table). `onFinish`/`onReset` write a `params` state object and reset to page 1 through `actionRef.current?.setPageInfo?.({ current: 1 })`; `params` is passed to the table, so a filter change refetches without the table owning the form state.
+- Summary tiles render from `getAllUsers()`, never from the current page of results, so the figures do not move when the user pages or filters. Both tiles and table refresh together through the shared `reload()`.
+- `perform(action, success)` is the single mutation path: it sets `busy`, runs the call, awaits `reload()`, and owns the success/error toasts. Row actions, bulk actions, and the drawer all route through it, so new mutations should too.
+- Bulk actions hang off `rowSelection` + `tableAlertOptionRender`, and the destructive one goes through `modal.confirm` from `App.useApp()`.
+- `options.ts` holds `ROLE_OPTIONS`/`STATUS_OPTIONS` shared by the filter, the drawer form, and the columns — a new status should be added to `UserStatus` in `src/types` and to `STATUS_OPTIONS`, and nothing else.
+- CSV export goes through `src/utils/csv.ts`: `downloadCsv` writes a UTF-8 BOM so Excel reads non-ASCII names, and `csvCell` prefixes a `'` to any value starting with `=`, `+`, `-`, or `@` so a name cannot become a spreadsheet formula.
+
+User table columns live in `src/pages/users/UserColumn.tsx` (a `use*Columns` hook returning `ProColumns<User>[]`), row actions in `src/pages/users/UserActions.tsx`. Drawer CRUD follows `UserList.tsx`: one `Form.useForm`, an `editing` record in state, `resetFields()` before populating, and a reload after a mutation. Shared presentational components live in `src/components/` (`MetricsRow` for stat tiles).
 
 ### Charts
 
@@ -65,15 +95,6 @@ Rules the existing charts follow, and new ones should too:
 
 `height` on a plot includes the axis band — do not add a height that assumes the axis lives outside it, and do not give the card a fixed height that clips it.
 
-### Theming and styles — two places to change a color
-
-- `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) feeds `appTheme`, the antd `ThemeConfig` passed to `ConfigProvider` in `App.tsx`. This is the rebrand entry point. `CHART_TOKENS` reads `series` from the same primary color, so changing the brand color moves the charts too — re-check that hue against the white card surface before shipping it.
-- `src/styles/variables.less` — LESS variables duplicating the same palette for hand-written CSS.
-
-`src/styles/index.less` is imported once in `main.tsx` and is the only entry point; it `@import`s `variables.less` first, then `global.less`, `main-layout.less`, `auth-layout.less`. Partial files do **not** import `variables.less` themselves and rely on that ordering — a new `.less` file added to `index.less` before the variables import will fail to compile.
-
-Class names shared between LESS and components (`.header-brand`, `.page-users`, `.auth-switch`, `.route-loader`, `.layout-version`, `.section-card`) are the coupling point; renaming one side breaks the other silently.
-
 ## Conventions
 
 - `@/` alias resolves to `src/` and is declared in **both** `vite.config.ts` and `tsconfig.json`; add new aliases to both.
@@ -81,3 +102,9 @@ Class names shared between LESS and components (`.header-brand`, `.page-users`, 
 - ESLint runs `typescript-eslint`'s **type-checked** rules. Passing an async function where a void return is expected is an error — wrap call sites as `onClick={() => void handler()}`. `react-router`'s `navigate` returns a promise, so it needs `void` too.
 - Prettier owns formatting (100 columns, single quotes, trailing commas). Run `pnpm format` rather than hand-formatting.
 - No test framework is configured; do not add test files expecting them to run.
+
+## Known gaps
+
+- `src/pages/dashboard/DashboardPage.tsx` still renders its own `Typography.Title level={2}` instead of a `PageContainer` like User management's — T1's "no duplicate page titles" pass stopped short of it.
+- No error boundary — an unexpected render error blanks the page.
+- The mock `users` array is module state, so it is shared across tabs and reset on reload.
