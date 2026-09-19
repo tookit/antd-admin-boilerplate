@@ -175,7 +175,12 @@ body {
 .metric-inner {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  /* Wrap, not shrink: a 232px tile cannot hold a currency value and an unshrinkable
+     trend caption side by side, and a squeezed value column paints over the caption.
+     Both children are `flex: 0 0 auto`, so the line breaks instead of overlapping and
+     the trend drops to its own right-aligned row. */
+  flex-wrap: wrap;
+  gap: 8px 16px;
 }
 .metric-icon {
   display: grid;
@@ -189,11 +194,14 @@ body {
   font-size: 22px;
 }
 .metric-text {
+  flex: 0 0 auto;
   min-width: 0;
 }
 .metric-card .ant-statistic-content {
   font-size: 26px;
   font-weight: 600;
+  /* The value never wraps to a second line; the trend caption is what gives way. */
+  white-space: nowrap;
 }
 .metric-card .ant-statistic-title {
   font-size: 13px;
@@ -207,16 +215,20 @@ body {
   color: var(--app-muted);
 }
 .metric-trend {
+  /* Wraps to its own row when the value needs the width; `margin-left: auto` then
+     right-aligns it there, so both sizes of tile read the same way. */
+  flex: 0 0 auto;
   margin-left: auto;
   text-align: right;
-  white-space: nowrap;
 }
 .metric-trend-value {
   display: block;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .metric-trend-caption {
+  display: block;
   font-size: 12px;
 }
 .metric-trend-up .metric-trend-value {
