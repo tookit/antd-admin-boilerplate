@@ -10,6 +10,7 @@ import { AutoComplete, Avatar, Button, Dropdown, Empty, Input, Popover, Space, t
 import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { APP_CONFIG } from '@/constants/app';
+import TemplateSettingsDrawer from '@/components/TemplateSettingsDrawer';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSettings } from '@/contexts/SettingsContext';
 import { protectedRoutes } from '@/routes/routeDefinitions';
@@ -23,6 +24,7 @@ export default function MainLayout() {
   const { settings, preview } = useSettings();
   const { token } = theme.useToken();
   const [search, setSearch] = useState('');
+  const [templateSettingsOpen, setTemplateSettingsOpen] = useState(false);
   /*
    * No `locale` on `ProConfigProvider`: it has no such prop (it takes `intl`), and
    * ProComponents derives its own intl from the antd `ConfigProvider` above us —
@@ -33,7 +35,7 @@ export default function MainLayout() {
       <ProLayout
         title={settings.name}
         logo={settings.logo || false}
-        layout="mix"
+        layout={settings.layout}
         navTheme="light"
         fixSiderbar
         fixedHeader
@@ -50,27 +52,31 @@ export default function MainLayout() {
             <span>{settings.name}</span>
           </Link>
         )}
-        headerContentRender={() => (
-          <AutoComplete
-            className="global-search"
-            value={search}
-            options={menuRoutes
-              .filter((route) => route.name.toLowerCase().includes(search.toLowerCase()))
-              .map((route) => ({ value: route.path, label: route.name }))}
-            onSearch={setSearch}
-            onSelect={(path) => {
-              setSearch('');
-              void navigate(path);
-            }}
-          >
-            <Input
-              prefix={<SearchOutlined />}
-              placeholder="Search pages…"
-              aria-label="Search pages"
-              allowClear
-            />
-          </AutoComplete>
-        )}
+        headerContentRender={
+          settings.layout === 'top'
+            ? undefined
+            : () => (
+                <AutoComplete
+                  className="global-search"
+                  value={search}
+                  options={menuRoutes
+                    .filter((route) => route.name.toLowerCase().includes(search.toLowerCase()))
+                    .map((route) => ({ value: route.path, label: route.name }))}
+                  onSearch={setSearch}
+                  onSelect={(path) => {
+                    setSearch('');
+                    void navigate(path);
+                  }}
+                >
+                  <Input
+                    prefix={<SearchOutlined />}
+                    placeholder="Search pages…"
+                    aria-label="Search pages"
+                    allowClear
+                  />
+                </AutoComplete>
+              )
+        }
         actionsRender={() => [
           <Popover
             key="notifications"
@@ -86,8 +92,8 @@ export default function MainLayout() {
             key="settings"
             type="text"
             icon={<SettingOutlined />}
-            aria-label="Settings"
-            onClick={() => void navigate('/settings')}
+            aria-label="Template settings"
+            onClick={() => setTemplateSettingsOpen(true)}
           />,
         ]}
         avatarProps={{
@@ -161,6 +167,10 @@ export default function MainLayout() {
       >
         <Outlet />
       </ProLayout>
+      <TemplateSettingsDrawer
+        open={templateSettingsOpen}
+        onClose={() => setTemplateSettingsOpen(false)}
+      />
     </ProConfigProvider>
   );
 }

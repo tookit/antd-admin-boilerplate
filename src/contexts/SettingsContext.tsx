@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type PropsWithChildren 
 import { APP_CONFIG } from '@/constants/app';
 import { readPreferences, savePreferences } from '@/utils/storage';
 
+export type LayoutMode = 'side' | 'mix' | 'top';
+
 export const DEFAULT_SETTINGS = {
   name: String(APP_CONFIG.name),
   logo: String(APP_CONFIG.logo),
@@ -10,6 +12,7 @@ export const DEFAULT_SETTINGS = {
   description: 'Building better products, together.',
   primaryColor: String(APP_CONFIG.theme.primaryColor),
   mode: 'light',
+  layout: 'mix' as LayoutMode,
   collapsed: false,
   language: 'en-US',
   timezone: 'Asia/Shanghai',
@@ -38,6 +41,7 @@ const SettingsContext = createContext<{
   settings: Settings;
   saved: Settings;
   preview: (value: Partial<Settings>) => void;
+  commit: (value: Partial<Settings>) => void;
   save: (value: Settings) => void;
   cancel: () => void;
 } | null>(null);
@@ -53,6 +57,14 @@ export function SettingsProvider({ children }: PropsWithChildren) {
         settings,
         saved,
         preview: (value) => setSettings((previous) => ({ ...previous, ...value })),
+        commit: (value) => {
+          setSettings((previous) => ({ ...previous, ...value }));
+          setSaved((previous) => {
+            const next = { ...previous, ...value };
+            savePreferences(KEY, next);
+            return next;
+          });
+        },
         save: (value) => {
           savePreferences(KEY, value);
           setSaved(value);
