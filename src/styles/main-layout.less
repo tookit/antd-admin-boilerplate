@@ -6,7 +6,14 @@
 .ant-pro-layout .ant-pro-layout-content {
   padding: 0;
 }
+/**
+ * `width: 100%` is load-bearing. The layout content is a flex column, and an
+ * auto inline margin cancels `align-items: stretch` — without a definite width
+ * the container shrink-to-fits its own content, so a narrow page (Profile)
+ * renders in a visibly narrower, indented box than a wide one (Users).
+ */
 .ant-pro-page-container {
+  width: 100%;
   max-width: 1680px;
   margin: 0 auto;
 }
