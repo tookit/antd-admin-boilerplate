@@ -55,11 +55,19 @@ Paths are relative (`users`, not `/users`) because they nest under a layout rout
 
 `src/hooks/useProTable.ts` centralizes the ProTable setup — pagination, search, toolbar options, `PaginatedResponse` unwrapping — and reads `message` from `App.useApp()` so toasts inherit the configured theme. Use it for new list screens. Columns for the users table live in `src/pages/users/UserColumn.tsx`.
 
+### Charts
+
+The dashboard plots two of the same figures the rest of the page shows — signups per month, and users per role. Both are derived in `src/mocks/api.ts` from the live `users` array, so the tiles and the charts can never disagree.
+
+Charts use `@ant-design/plots`. Each one is a small component in `src/pages/dashboard/` that owns its mark spec, and every chart is paired with `ChartDataTable` — a `.sr-only` table holding the same numbers, because a tooltip must never be the only way to read a value. Colours come from `CHART_TOKENS` in `src/constants/app.ts`; both charts plot one measure, so both use the single brand hue rather than a per-category palette.
+
+Entry animation is off. It is decorative, and G2 does not honour `prefers-reduced-motion`.
+
 ## Theming
 
 Two places to change, and they are not linked to each other:
 
-- `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) plus `appTheme`, the Ant Design `ThemeConfig` passed to `ConfigProvider`. This is the rebrand entry point.
+- `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) plus `appTheme`, the Ant Design `ThemeConfig` passed to `ConfigProvider`. This is the rebrand entry point, and `CHART_TOKENS` below it reads `series` from the same primary color. If you change that color, re-check the chart hue against the white card surface for contrast — an accent that works as a button fill does not automatically work as a 2px line.
 - `src/styles/variables.less` — LESS variables duplicating the palette for hand-written CSS.
 
 `src/styles/index.less` is the only stylesheet entry point, imported once in `src/main.tsx`. It imports `variables.less` first; the other partials depend on that ordering and do not import variables themselves, so keep new `@import` lines below it.

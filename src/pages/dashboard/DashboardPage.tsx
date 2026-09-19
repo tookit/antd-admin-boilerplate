@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Card, Col, List, Row, Skeleton, Statistic, Typography } from 'antd';
 import { getDashboardOverview } from '@/api/modules/dashboard.api';
 import type { DashboardData } from '@/types';
+import ChartDataTable from './ChartDataTable';
+import SignupsChart from './SignupsChart';
+import UsersByRoleChart from './UsersByRoleChart';
 
 const SKELETON_KEYS = ['a', 'b', 'c', 'd'];
 
@@ -41,6 +44,51 @@ export default function DashboardPage() {
                 </Card>
               </Col>
             ))}
+      </Row>
+
+      <Row gutter={[16, 16]} className="section-card">
+        <Col xs={24} lg={16}>
+          <Card
+            title="Signups over time"
+            extra={<Typography.Text type="secondary">Last 12 months</Typography.Text>}
+          >
+            {data ? (
+              <>
+                <SignupsChart data={data.signupsByMonth} />
+                <ChartDataTable
+                  caption="Signups per month, last 12 months"
+                  columns={['Month', 'Signups']}
+                  rows={data.signupsByMonth.map((point) => ({
+                    key: point.month,
+                    cells: [point.month, point.signups],
+                  }))}
+                />
+              </>
+            ) : (
+              <Skeleton active />
+            )}
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={8}>
+          <Card title="Users by role">
+            {data ? (
+              <>
+                <UsersByRoleChart data={data.usersByRole} />
+                <ChartDataTable
+                  caption="Users by role"
+                  columns={['Role', 'Users']}
+                  rows={data.usersByRole.map((entry) => ({
+                    key: entry.role,
+                    cells: [entry.role, entry.count],
+                  }))}
+                />
+              </>
+            ) : (
+              <Skeleton active />
+            )}
+          </Card>
+        </Col>
       </Row>
 
       <Card title="Recent activity" className="section-card">

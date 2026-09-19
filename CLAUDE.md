@@ -33,7 +33,7 @@ To connect a real backend, rewrite layer 2 and keep the `PaginatedResponse<T>` c
 
 ### Routes are declared once, consumed twice
 
-`src/routes/routeDefinitions.tsx` is the single source of truth: `protectedRoutes` (with `name`/`icon`/`hideInMenu`) and `authRoutes`, all lazy-loaded. `src/routes/index.tsx` maps them into `<Routes>`; `src/layouts/MainLayout.tsx` independently consumes `protectedRoutes` to build the ProLayout menu.
+`src/routes/routeDefinitions.tsx` is the single source of truth: `protectedRoutes` (with `name`/`icon`/`hideInMenu`) and `authRoutes`. Protected pages are `lazy()`-loaded; the auth pages are imported eagerly, because their Suspense fallback (`.route-loader`, `min-height: 100vh`) renders inside the auth card and would balloon it before shrinking. `src/routes/index.tsx` maps them into `<Routes>`; `src/layouts/MainLayout.tsx` independently consumes `protectedRoutes` to build the ProLayout menu.
 
 Adding a page = add one entry to `routeDefinitions.tsx`. Paths are relative (`'users'`, not `'/users'`) because they nest under layout routes; `MainLayout` re-prefixes them with `/` for menu keys.
 
@@ -51,9 +51,23 @@ Adding a page = add one entry to `routeDefinitions.tsx`. Paths are relative (`'u
 
 User table columns live in `src/pages/users/UserColumn.tsx` (a `use*Columns` hook returning `ProColumns<User>[]`), row actions in `src/pages/users/UserActions.tsx`. Drawer CRUD follows `src/pages/users/UserList.tsx`: one `Form.useForm`, an `editing` record in state, `resetFields()` before populating, and `actionRef.current?.reload()` after a mutation.
 
+### Charts
+
+Dashboard charts use `@ant-design/plots` (G2 v5 under the hood — the config shape is G2's, so consult G2 v5 docs, not the older `@ant-design/plots` v1 / G2Plot API). Each chart is a component in `src/pages/dashboard/` owning its own mark spec.
+
+Rules the existing charts follow, and new ones should too:
+
+- **One measure = one hue.** `CHART_TOKENS.series` colours every mark, and `legend={false}` — a single series needs no legend box, the card title names it. Per-category palettes are for identity, not for re-encoding a length the bar already shows.
+- **Every chart ships a `ChartDataTable`.** It renders the same numbers as an `.sr-only` table (class in `global.less`), so no value is reachable only by hovering.
+- **Spread `NO_ENTRY_ANIMATION` into every plot.** The entry animation is decorative, and G2 ignores `prefers-reduced-motion`. It has to be spread from a variable rather than written as a prop — see the comment on the constant.
+- **Labels go outside the mark.** A label at `position: 'top'` lands _on_ the bar's top edge and renders dark gray over the fill; `dy: -18` lifts it clear. Watch for this on any new labelled chart.
+- Chart data is derived in `src/mocks/api.ts` from the live `users` array (`metricsFor`, `rolesFor`) rather than hardcoded, so tiles and charts cannot drift apart.
+
+`height` on a plot includes the axis band — do not add a height that assumes the axis lives outside it, and do not give the card a fixed height that clips it.
+
 ### Theming and styles — two places to change a color
 
-- `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) feeds `appTheme`, the antd `ThemeConfig` passed to `ConfigProvider` in `App.tsx`. This is the rebrand entry point.
+- `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) feeds `appTheme`, the antd `ThemeConfig` passed to `ConfigProvider` in `App.tsx`. This is the rebrand entry point. `CHART_TOKENS` reads `series` from the same primary color, so changing the brand color moves the charts too — re-check that hue against the white card surface before shipping it.
 - `src/styles/variables.less` — LESS variables duplicating the same palette for hand-written CSS.
 
 `src/styles/index.less` is imported once in `main.tsx` and is the only entry point; it `@import`s `variables.less` first, then `global.less`, `main-layout.less`, `auth-layout.less`. Partial files do **not** import `variables.less` themselves and rely on that ordering — a new `.less` file added to `index.less` before the variables import will fail to compile.

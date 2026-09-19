@@ -17,9 +17,21 @@ export type UserFormValues = Pick<User, 'name' | 'email' | 'role' | 'status'>;
 /** Upsert payload: `id` present means update, absent means create. */
 export type UserInput = UserFormValues & Partial<Pick<User, 'id'>>;
 
+export interface SignupPoint {
+  month: string;
+  signups: number;
+}
+
+export interface RoleCount {
+  role: UserRole;
+  count: number;
+}
+
 export interface DashboardData {
   metrics: Array<{ label: string; value: number; suffix?: string }>;
   activities: Array<{ title: string; detail: string; time: string }>;
+  signupsByMonth: SignupPoint[];
+  usersByRole: RoleCount[];
 }
 
 export interface PaginatedResponse<T> {
