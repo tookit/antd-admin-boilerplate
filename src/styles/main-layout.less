@@ -1,42 +1,83 @@
-.ant-pro-layout {
+.ant-pro-layout,
+.ant-pro-layout .ant-layout {
   min-height: 100vh;
   background: @layout-bg;
 }
-.ant-pro-layout .ant-layout {
-  background: @layout-bg;
+.ant-pro-layout .ant-pro-layout-content {
+  padding: 0;
 }
 .ant-pro-page-container {
-  margin: 16px;
-  border: 1px solid @border-color;
-  border-radius: 10px;
-  background: #f5f8fa;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+.ant-pro-page-container .ant-page-header {
+  padding: 24px 24px 16px;
+}
+.ant-pro-page-container .ant-page-header-heading {
+  flex-wrap: wrap;
+}
+.ant-pro-page-container .ant-page-header-heading-left {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.ant-pro-page-container .ant-page-header-heading-title {
+  font-size: 24px;
+}
+.ant-pro-page-container .ant-page-header-heading-sub-title {
+  width: 100%;
+  margin: 4px 0 0;
+  color: @text-secondary;
+  white-space: normal;
 }
 .ant-pro-page-container-children-container {
-  padding: 24px;
+  padding: 0 24px 24px;
 }
 .header-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: @font-weight-semibold;
+  color: var(--app-text);
+  font-size: 20px;
+  font-weight: 700;
+}
+.header-brand span {
+  max-width: 156px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .header-brand img {
   width: 32px;
   height: 32px;
+  object-fit: contain;
 }
 .header-avatar {
-  cursor: pointer;
+  height: auto;
   padding: 4px 8px;
 }
+.global-search {
+  width: min(320px, 100%);
+  margin-left: 24px;
+}
 .layout-version {
-  padding: 12px;
+  padding: 16px;
   border-top: 1px solid @border-color;
   color: @text-secondary;
-  font-size: @font-size-sm;
+  font-size: 12px;
+  line-height: 1.8;
   text-align: center;
 }
-.page-users .ant-pro-card {
-  border-radius: 10px;
+@media (max-width: 767px) {
+  .global-search {
+    display: none;
+  }
+  .header-user-name {
+    display: none;
+  }
+  .ant-pro-page-container .ant-page-header {
+    padding: 16px;
+  }
+  .ant-pro-page-container-children-container {
+    padding: 0 16px 16px;
+  }
 }

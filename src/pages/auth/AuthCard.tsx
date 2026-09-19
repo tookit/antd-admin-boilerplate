@@ -3,6 +3,7 @@ import { App, Button, Form, Input, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockApi } from '@/mocks/api';
+import { useSettings } from '@/contexts/SettingsContext';
 
 interface AuthCardProps {
   mode: 'login' | 'register';
@@ -20,17 +21,18 @@ export default function AuthCard({ mode }: AuthCardProps) {
   const { message } = App.useApp();
   const [form] = Form.useForm<AuthFormValues>();
   const isLogin = mode === 'login';
+  const { settings } = useSettings();
 
   const submit = async (values: AuthFormValues) => {
     if (isLogin) await login(values.email);
     else await mockApi.register(values.name ?? 'New user', values.email);
     void message.success(isLogin ? 'Signed in with mock data.' : 'Account created with mock data.');
-    void navigate(isLogin ? '/dashboard' : '/login');
+    void navigate(isLogin ? settings.landingPage : '/login');
   };
   return (
     <div className={isLogin ? 'login-page' : 'page-register'}>
       <div className="auth-page__header">
-        <img className="auth-logo" src="/logo-symbol.svg" alt="Admin template" />
+        <img className="auth-logo" src={settings.logo} alt={settings.name} />
         <Typography.Title level={2}>
           {isLogin ? 'Welcome back' : 'Create an account'}
         </Typography.Title>

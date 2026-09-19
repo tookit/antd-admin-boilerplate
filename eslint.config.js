@@ -35,7 +35,10 @@ export default tseslint.config(
       // Context modules idiomatically colocate a provider with its consumer hook.
       'react-refresh/only-export-components': [
         'error',
-        { allowConstantExport: true, allowExportNames: ['useAuth'] },
+        {
+          allowConstantExport: true,
+          allowExportNames: ['useAuth', 'useSettings', 'DEFAULT_SETTINGS'],
+        },
       ],
     },
   },

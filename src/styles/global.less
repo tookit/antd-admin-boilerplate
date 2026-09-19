@@ -5,10 +5,8 @@ body,
 }
 body {
   margin: 0;
-  color: #061824;
-  background: @layout-bg;
   font-family:
-    'Poppins',
+    Inter,
     -apple-system,
     BlinkMacSystemFont,
     'Segoe UI',
@@ -19,24 +17,19 @@ body {
 *::after {
   box-sizing: border-box;
 }
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.app-surface {
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--app-text);
 }
 .route-loader {
-  min-height: 100vh;
+  min-height: 65vh;
   display: grid;
   place-items: center;
 }
 .section-card {
   margin-top: 24px;
 }
-
-/* Keeps a chart's data table available to assistive tech without showing it. */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -48,9 +41,98 @@ body {
   white-space: nowrap;
   border: 0;
 }
-.ant-table .ant-table-thead .ant-table-cell {
-  color: @text-secondary;
-  font-size: @font-size-sm;
-  font-weight: @font-weight-semibold;
-  text-transform: uppercase;
+.ant-card,
+.ant-pro-card {
+  box-shadow: 0 1px 3px rgb(0 0 0 / 4%);
+}
+.section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.card-description {
+  color: var(--app-muted);
+  margin: -8px 0 20px;
+  font-size: 13px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+}
+.full-width {
+  grid-column: 1 / -1;
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+}
+.setting-row + .setting-row {
+  border-top: 1px solid var(--app-border);
+}
+.setting-row small {
+  display: block;
+  color: var(--app-muted);
+  margin-top: 4px;
+}
+.danger-card {
+  background: var(--app-danger-bg);
+}
+.save-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: var(--app-surface);
+  border-top: 1px solid var(--app-border);
+  padding: 16px 24px;
+}
+.metric-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--app-primary-bg);
+  color: var(--app-primary);
+  font-size: 24px;
+}
+.metric-card .ant-statistic-content {
+  font-size: 26px;
+  font-weight: 600;
+}
+.metric-card .ant-statistic-title {
+  font-size: 13px;
+}
+.ant-table-wrapper {
+  max-width: 100%;
+}
+:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ant-card .ant-card-body {
+    padding: 16px;
+  }
+  .ant-card-head-wrapper {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

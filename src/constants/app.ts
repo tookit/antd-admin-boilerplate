@@ -2,11 +2,11 @@ import type { ThemeConfig } from 'antd';
 
 /** Change these values to rebrand the boilerplate. */
 export const APP_CONFIG = {
-  name: 'Admin Template',
+  name: 'AdminPro',
   logo: '/logo-symbol.svg',
   version: '0.1.0',
   theme: {
-    primaryColor: '#007AFF',
+    primaryColor: '#1677FF',
     infoColor: '#3793d1',
     successColor: '#37B8A1',
     warningColor: '#fac864',
@@ -21,10 +21,19 @@ export const appTheme: ThemeConfig = {
     colorSuccess: APP_CONFIG.theme.successColor,
     colorWarning: APP_CONFIG.theme.warningColor,
     colorError: APP_CONFIG.theme.errorColor,
-    fontSize: 16,
-    colorTextBase: '#061824',
-    fontFamily: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontSize: 14,
+    borderRadius: 8,
+    borderRadiusLG: 12,
+    controlHeight: 36,
+    colorBgLayout: '#F5F7FB',
+    colorText: '#1F2937',
+    colorTextSecondary: '#626D7D',
+    colorTextPlaceholder: '#707B8B',
+    colorBorderSecondary: '#EEF0F3',
+    fontFamily:
+      "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif",
   },
+  components: { Card: { headerFontSize: 16 }, Table: { headerBg: '#F8FAFC' } },
 };
 
 export const STORAGE_KEYS = { USER: 'antd-admin-boilerplate-user' } as const;
