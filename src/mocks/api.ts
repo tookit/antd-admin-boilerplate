@@ -163,11 +163,16 @@ let users: User[] = [
 ];
 
 /**
- * Product-level activity for the last 365 days. Independent of the `users` table
+ * Product-level activity for the last two years. Independent of the `users` table
  * above, which is the admin's slice of it.
  *
  * Seeded rather than random: the demo must not reshuffle its own numbers on every
  * reload, and the recent days have to stay put while the user compares ranges.
+ *
+ * Two years, not one: the dashboard's change figures compare a range against the
+ * preceding range of equal length, and a one-year series leaves that previous
+ * window empty — a 12-month default range then reports a five-thousand-percent
+ * "increase" measured against ten days of data.
  */
 function buildDaily(days: number): DailyPoint[] {
   let seed = 20260101;
@@ -189,7 +194,7 @@ function buildDaily(days: number): DailyPoint[] {
   });
 }
 
-const DAILY = buildDaily(365);
+const DAILY = buildDaily(730);
 
 /** Visits by source, as shares that add up to 100. */
 const TRAFFIC_SOURCES: TrafficSource[] = [
