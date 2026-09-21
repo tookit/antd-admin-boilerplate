@@ -2,6 +2,16 @@
 
 Vite + React 19 + Ant Design 5 admin starter with Pro Components. Every data call is mocked in memory, so it runs with no backend.
 
+![AdminPro dashboard](./output/playwright/adminpro-dashboard.png)
+
+## Highlights
+
+- Responsive ProLayout shell with sidebar, mixed, and top navigation modes.
+- Live template customizer for light/dark mode, preset or custom brand colors, and layout selection.
+- Dashboard metrics, accessible chart data, recent orders, tasks, and calendar views.
+- User management, profile, security, and organization settings flows backed by deterministic mock data.
+- Browser-persisted appearance and preferences with no backend required.
+
 ## Requirements
 
 - Node.js `^20.19` or `>=22.12` (required by Vite 8)
@@ -57,7 +67,7 @@ Dashboard, User Management, Profile, Security and Settings are implemented. `Rol
 
 ### Local state, and what is deliberately not wired
 
-`src/contexts/SettingsContext.tsx` holds branding and preferences in `localStorage` — theme, primary color, logo, landing page, table density, notification switches. `GeneralTab` and `PreferencesTab` stage edits through `preview()` and only `save()` writes them; `cancel()` rolls back. Keys are validated on read by `readPreferences` in `src/utils/storage.ts`, which drops anything that is not a known key with the right type — a new persisted setting has to be added to `DEFAULT_SETTINGS` or it will silently disappear.
+`src/contexts/SettingsContext.tsx` holds branding and preferences in `localStorage` — theme, primary color, layout, logo, landing page, table density, and notification switches. The header's template customizer applies and persists appearance changes immediately. `GeneralTab` and `PreferencesTab` stage their form edits through `preview()` and only `save()` writes them; `cancel()` rolls back. Keys are validated on read by `readPreferences` in `src/utils/storage.ts`, which drops anything that is not a known key with the right type — a new persisted setting has to be added to `DEFAULT_SETTINGS` or it will silently disappear.
 
 Profile data persists separately under `STORAGE_KEYS.PROFILE`. Changing a password, enabling 2FA, removing a device, signing out other sessions, connecting an integration, billing and account deletion all need a server, so they explain that and refuse — none of them report success. Keep that property when touching those screens: a demo that fakes a password change teaches the wrong thing.
 
@@ -75,7 +85,9 @@ Entry animation is off. It is decorative, and G2 does not honour `prefers-reduce
 
 ## Theming
 
-Two places to change, and they are not linked to each other:
+The header settings button opens a template customizer that previews and persists light/dark mode, the primary color, and the ProLayout mode. The full Settings page remains available from the avatar menu for organization-level preferences.
+
+For static defaults and rebranding, update these two sources:
 
 - `src/constants/app.ts` — `APP_CONFIG` (name, logo, version, brand colors) plus `appTheme`, the Ant Design `ThemeConfig` passed to `ConfigProvider`. This is the rebrand entry point, and `CHART_TOKENS` below it reads `series` from the same primary color. If you change that color, re-check the chart hue against the white card surface for contrast — an accent that works as a button fill does not automatically work as a 2px line.
 - `src/styles/variables.less` — LESS variables duplicating the palette for hand-written CSS.
