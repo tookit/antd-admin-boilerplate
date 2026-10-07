@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Spin } from 'antd';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import AuthLayout from '@/layouts/AuthLayout';
 import MainLayout from '@/layouts/MainLayout';
 import { authRoutes, NotFoundPage, protectedRoutes } from './routeDefinitions';
@@ -25,6 +26,7 @@ const suspense = (element: ReactNode) => (
 );
 
 export default function Router() {
+  const { settings } = useSettings();
   return (
     <Routes>
       <Route element={<AuthLayout />}>
@@ -45,7 +47,7 @@ export default function Router() {
         ))}
       </Route>
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to={settings.landingPage} replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
